@@ -6,7 +6,15 @@ import threading
 inicioPuente = 10
 largoPuente = 20
 
-VacasPorPuente=threading.Semaphore(2)
+N=1
+
+def ValorarN(tan):
+  global N
+  N=tan
+
+ValorarN(2)#se tiene que ejecutar antes de definir el semaforo
+
+VacasPorPuente=threading.Semaphore(N)
 
 class Vaca(threading.Thread):
   def __init__(self):
@@ -46,6 +54,9 @@ def cls():
 
 def dibujarPuente():
   print(' ' * inicioPuente + '=' * largoPuente)
+
+
+
 
 while(True):
   cls()
