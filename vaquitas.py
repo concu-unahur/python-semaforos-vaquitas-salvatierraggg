@@ -6,7 +6,7 @@ import threading
 inicioPuente = 10
 largoPuente = 20
 
-pase=threading.Semaphore(1)
+VacasPorPuente=threading.Semaphore(2)
 
 class Vaca(threading.Thread):
   def __init__(self):
@@ -14,14 +14,14 @@ class Vaca(threading.Thread):
     self.posicion = 0
     self.velocidad = random.uniform(0.1, 0.5)
 
-  global pase
+  global VacasPorPuente
 
   def avanzar(self):
     if self.posicion == inicioPuente-1:
-      pase.acquire()
+      VacasPorPuente.acquire()
 
     if self.posicion == inicioPuente+largoPuente:
-      pase.release()
+      VacasPorPuente.release()
 
     time.sleep(self.velocidad)
     self.posicion += 1    
