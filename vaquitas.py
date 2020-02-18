@@ -12,7 +12,8 @@ def ValorarN(tan):
   global N
   N=tan
 
-ValorarN(2)#se tiene que ejecutar antes de definir el semaforo
+ValorarN(1)#se tiene que ejecutar antes de definir el semaforo
+            #tendria que cambiar ese 2 por algo para escribirlo con teclado en cuanto me entere de como se lo escribiria
 
 VacasPorPuente=threading.Semaphore(N)
 
@@ -22,7 +23,7 @@ class Vaca(threading.Thread):
     self.posicion = 0
     self.velocidad = random.uniform(0.1, 0.5)
 
-  global VacasPorPuente
+  global VacasPorPuegitnte
 
   def avanzar(self):
     if self.posicion == inicioPuente-1:
@@ -53,10 +54,12 @@ def cls():
   os.system('cls' if os.name=='nt' else 'clear')
 
 def dibujarPuente():
-  print(' ' * inicioPuente + '=' * largoPuente)
-
-
-
+  puente=' ' * inicioPuente + '=' * largoPuente
+  print(puente*2)
+#el primer puente ya ordena cuantas vacas pueden pasar 
+#y llegaran en el mismo orden en el segundo puente 
+#por ahora no es nesesario configurar un control de 
+#capacidad en el segunfo puente 
 
 while(True):
   cls()
@@ -66,4 +69,7 @@ while(True):
   for v in vacas:
     v.dibujar()
   dibujarPuente()
+
   time.sleep(0.2)
+  
+
