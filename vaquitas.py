@@ -7,8 +7,6 @@ inicioPuente = 10
 largoPuente = 20
 
 pase=threading.Semaphore(1)
-avance=threading.Semaphore(largoPuente)
-
 
 class Vaca(threading.Thread):
   def __init__(self):
@@ -19,17 +17,14 @@ class Vaca(threading.Thread):
   global pase
 
   def avanzar(self):
-    try:
-      if self.posicion >= inicioPuente and self.posicion<inicioPuente+largoPuente:
-        pase.acquire()
-        time.sleep(self.velocidad)
-        self.posicion += 1
-      
-    finally:
-        if  self.posicion<inicioPuente:
-          time.sleep(self.velocidad)
-          self.posicion += 1
-          
+    if self.posicion == inicioPuente-1:
+      pase.acquire()
+
+    if self.posicion == inicioPuente+largoPuente:
+      pase.release()
+
+    time.sleep(self.velocidad)
+    self.posicion += 1    
 
   def dibujar(self):
     print(' ' * self.posicion + "V")
@@ -38,12 +33,6 @@ class Vaca(threading.Thread):
   def run(self):
     while(True):
       self.avanzar()
-
-
-
-
-
-
 
 
 vacas = []
