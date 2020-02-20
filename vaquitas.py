@@ -2,60 +2,67 @@ import os
 import random
 import time
 import threading
-N=1
+
+DistanciaMaxima=1
+#link con ayuda para las listas https://uniwebsidad.com/libros/algoritmos-python/capitulo-7/listas
 
 class puente():
 
   # por defeco cominsan los valores asi
-  def __init__(self,inicioPuente,largoPuente):
+  def __init__(self,inicioPuente,largoPuente,N):
     self.inicioPuente=inicioPuente
     self.largoPuente=largoPuente
+    self.VacasPorPuente=threading.Semaphore(N)
+    self.tamañoTotal=self.inicioPuente+self.largoPuente
+    #memoriaAuxiliar=[]
+
 
   
-Puentes=[]
+Puentes=[]#3 puentes diferentes con inicio,Largo,y cantidad de 
+          #animales que pueden pasar ya que cada puente tiene 
+          #su propio semaforo
 
-p = puente(5,10)
+p = puente(5,10,3)
 Puentes.append(p)
   
-p = puente(3,40)
+p = puente(6,4,2)
 Puentes.append(p)
 
-p = puente(4,16)
+p = puente(4,6,1)
 Puentes.append(p)
 
-
-  
-
-def valorarN(tanto):
-  global N
-  N=tanto
-
-  
-
-
-
-valorarN(2)#se tiene que ejecutar antes de definir el semaforo
-            #tendria que cambiar ese 2 por algo para escribirlo con teclado en cuanto me entere de como se lo escribiria
-
-VacasPorPuente=threading.Semaphore(N)
+for p in Puentes:
+  DistanciaMaxima+=p.tamañoTotal
+  #uso una variable para esto por que no se
+  #como se escribe para sumar los elementos de la lista
 
 class Vaca(threading.Thread):
   def __init__(self):
     super().__init__()
-    self.posicion = 0
-    self.velocidad = random.uniform(0.1, 0.5)
-
-  global VacasPorPuegitnte
+    self.posicionMemoria=0
+    self.posicion =0
+    self.velocidad = random.uniform(0.1, 0.5) 
+    self.pasandoPuente=0
+    self.parar=threading.Semaphore()
+  
 
   def avanzar(self):
-    if self.posicion == Puentes[0].inicioPuente-1:
-      VacasPorPuente.acquire()
+    global Puentes
+    try:
+      if self.posicion == Puentes[self.pasandoPuente].inicioPuente+self.posicionMemoria-1:
+        Puentes[self.pasandoPuente].VacasPorPuente.acquire()
 
-    if self.posicion == Puentes[0].inicioPuente+Puentes[0].largoPuente:
-      VacasPorPuente.release()
+      if  self.posicion == Puentes[self.pasandoPuente].tamañoTotal+self.posicionMemoria:
+        Puentes[self.pasandoPuente].VacasPorPuente.release()
+        self.posicionMemoria+=Puentes[self.pasandoPuente].tamañoTotal
+        self.pasandoPuente+=1
 
-    time.sleep(self.velocidad)
-    self.posicion += 1    
+      time.sleep(self.velocidad)
+      self.posicion += 1    
+    
+    finally:
+      if self.posicion>=DistanciaMaxima:  
+        self.parar.acquire()
 
   def dibujar(self):
     print(' ' * self.posicion + "V")
